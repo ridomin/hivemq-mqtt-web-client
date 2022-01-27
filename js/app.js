@@ -32,12 +32,14 @@ var websocketclient = {
         if (parameters.get('host') != null) {$('#sslInput').click()};
     },
 
-    'connect': function () {
+    'connect': async function () {
         var host = $('#urlInput').val();
         var port = parseInt($('#portInput').val(), 10);
         var clientId = $('#clientIdInput').val();
-        var username = $('#userInput').val();
-        var password = $('#pwInput').val();
+        var username = '';
+        var deviceId = $('#deviceIdInput').val();
+        var password = '';
+        var sharedAccessKey = $('#sharedAccessKeyInput').val();
         var keepAlive = parseInt($('#keepAliveInput').val());
         var cleanSession = $('#cleanSessionInput').is(':checked');
         var lwTopic = $('#lwTopicInput').val();
@@ -46,7 +48,14 @@ var websocketclient = {
         var lwMessage = $('#LWMInput').val();
         var ssl = $('#sslInput').is(':checked');
 
-        this.client = new Messaging.Client(host, port, clientId);
+        $('#clientIdInput').val(deviceId);
+        clientId = deviceId;
+
+        var websocket;
+        [username, password, websocket] = await getIoTHubV2Credentials(host, deviceId, sharedAccessKey, 60)
+
+
+        this.client = new Paho.MQTT.Client(host, Number(port), '/mqtt', clientId);
         this.client.onConnectionLost = this.onConnectionLost;
         this.client.onMessageArrived = this.onMessageArrived;
 
@@ -144,7 +153,7 @@ var websocketclient = {
             return false;
         }
 
-        var message = new Messaging.Message(payload);
+        var message = new Paho.MQTT.Message(payload);
         message.destinationName = topic;
         message.qos = qos;
         message.retained = retain;

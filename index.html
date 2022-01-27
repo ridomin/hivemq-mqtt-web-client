@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <meta name="description" content="Try HiveMQ MQTT browser client – a websocket client that you can use to experiment with publishing and subscribing MQTT messages over port 8000">
+    <meta name="description" content="Try Azure MQTT browser client – a websocket client that you can use to experiment with publishing and subscribing MQTT messages over Web Sockets">
     <title>MQTT Websocket Client</title>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
@@ -17,8 +17,10 @@
 <body class="notconnected">
 <div id="header">
     <div>
-        <a href="https://www.hivemq.com"><img id="headerlogo" src="assets/hivemq-logo.svg" alt"HiveMQ Logo" title="HiveMQ" style="width: 275px; height: 65px"></a>
-        <span id="headertitle">Websockets Client Showcase</span>
+        <a href="https://azure.microsoft.com/en-us/overview/iot/"><img id="headerlogo" src="assets/azure-iot-hub-logo.png" alt"Azure IoT Logo" title="Azure IoT" style="width: 275px; height: 65px"></a>
+        <span id="headertitle">Websockets Client for IoT Hub
+            <small>based on Hive MQ WebSockets client</small>
+        </span>
     </div>
 </div>
 <div id="content" class="row">
@@ -43,17 +45,17 @@
                 <form class="custom">
                     <div class="large-5 columns">
                         <label>Host</label>
-                        <input id="urlInput" type="text" value="broker.mqttdashboard.com">
+                        <input id="urlInput" type="text" value="broker.azure-devices.net">
                     </div>
 
                     <div class="large-1 columns">
                         <label>Port</label>
-                        <input id="portInput" type="text" value="8000"/>
+                        <input id="portInput" type="text" value="443"/>
                     </div>
 
                     <div class="large-4 columns">
                         <label>ClientID</label>
-                        <input id="clientIdInput" type="text"/>
+                        <input id="clientIdInput" type="text" value="{deviceId}" disabled="true" />
                     </div>
 
                     <div class="large-2 columns">
@@ -66,13 +68,13 @@
                     </div>
 
                     <div class="large-4 columns">
-                        <label>Username</label>
-                        <input id="userInput" type="text"/>
+                        <label>DeviceId</label>
+                        <input id="deviceIdInput" type="text" value="d4"/>
                     </div>
 
                     <div class="large-3 columns">
-                        <label>Password</label>
-                        <input id="pwInput" type="password"/>
+                        <label>SharedAccessKey</label>
+                        <input id="sharedAccessKeyInput" type="text" value="MDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA="/>
                     </div>
 
                     <div class="large-2 columns">
@@ -82,7 +84,7 @@
 
                     <div class="large-1 columns">
                         <label>SSL</label>
-                        <input id="sslInput" type="checkbox"/>
+                        <input id="sslInput" type="checkbox" checked="true"/>
                     </div>
 
                     <div class="large-2 columns">
@@ -140,7 +142,7 @@
                         <div class="row">
                             <div class="large-6 columns">
                                 <label>Topic</label>
-                                <input id="publishTopic" type="text" value="testtopic/1">
+                                <input id="publishTopic" type="text" value="pnp/client1/props/set">
                             </div>
                             <div class="large-2 columns">
                                 <label for="publishQoSInput">QoS</label>
@@ -250,7 +252,7 @@
                                 <div class="row large-12 columns">
                                     <div class="large-12 columns">
                                         <label>Topic</label>
-                                        <input id="subscribeTopic" type="text" value="testtopic/#">
+                                        <input id="subscribeTopic" type="text" value="pnp/#">
                                     </div>
                                 </div>
                             </form>
@@ -279,6 +281,7 @@
 <script src="js/jquery.minicolors.min.js"></script>
 <script src="js/mqttws31.js"></script>
 <script src="js/encoder.js"></script>
+<script src="js/iothub-auth.js"></script>
 <script src="js/app.js"></script>
 
 <script>
@@ -294,7 +297,7 @@
     $(document).foundation();
     $(document).ready(function () {
 
-        $('#clientIdInput').val('clientId-' + randomString(10));
+        //$('#clientIdInput').val('clientId-' + randomString(10));
 
         $('#colorChooser').minicolors();
 
